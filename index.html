@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Concresuper 2026</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<header class="topo">
+  <div class="brand">
+    <div class="logo">CONCRE<span>SUPER</span></div>
+    <div class="subtitle">SUPER TECNOLOGIA EM CONCRETO</div>
+  </div>
+  <div class="info-arquivo" id="infoArquivo">Carregando dados…</div>
+  <button class="btn-atualizar" id="btnAtualizar">🔄 Atualizar dados</button>
+</header>
+
+<nav class="abas" id="abas">
+  <button class="aba ativa" data-aba="visao">Visão Geral</button>
+  <button class="aba" data-aba="propostas">Propostas</button>
+  <button class="aba" data-aba="perdas">Perdas</button>
+  <button class="aba" data-aba="concorrencia">Concorrência</button>
+  <button class="aba" data-aba="projecao">Projeção Real</button>
+  <button class="aba" data-aba="filiais">Filiais</button>
+  <button class="aba" data-aba="posicionamento">Market Share</button>
+</nav>
+
+<section class="filtros" id="filtros">
+  <label id="filtro-mes">Mês
+    <select id="fMes"><option value="todos">Todos os meses</option></select>
+  </label>
+  <label id="filtro-filial">Filial
+    <select id="fFilial"><option value="todos">Todas as filiais</option></select>
+  </label>
+  <label id="filtro-vendedor">Vendedor
+    <select id="fVendedor"><option value="todos">Todos os vendedores</option></select>
+  </label>
+  <label id="filtro-cidade">Cidade
+    <select id="fCidade"><option value="todos">Todas as cidades</option></select>
+  </label>
+  <label id="filtro-fck">Produto / FCK
+    <select id="fFck"><option value="todos">Todos os FCKs</option></select>
+  </label>
+  <button class="btn-limpar" id="btnLimpar">Limpar filtros</button>
+  <span class="ultima-atualizacao" id="ultimaAtualizacao"></span>
+</section>
+
+<main>
+  <section class="painel ativo" id="aba-visao">
+    <h2>Visão Geral Comercial</h2>
+    <div class="kpis" id="kpisVisao"></div>
+    <div class="grid-2">
+      <div class="card"><h3>Evolução Mensal</h3>
+        <div class="seg-indicador" id="segEvolucao">
+          <button data-ind="propostas" class="ativa">Propostas</button>
+          <button data-ind="perdas">Perdas</button>
+          <button data-ind="produzido">Produzido</button>
+        </div>
+        <canvas id="grafEvolucao"></canvas>
+      </div>
+      <div class="card"><h3>Desempenho por Filial</h3><canvas id="grafDesempenhoFilial"></canvas></div>
+    </div>
+    <div class="card"><h3>Análises e Correlações</h3><div id="correlacoes"></div></div>
+  </section>
+
+  <section class="painel" id="aba-propostas">
+    <h2>Análise de Propostas</h2>
+    <div class="kpis" id="kpisPropostas"></div>
+    <div class="grid-2">
+      <div class="card"><h3>Propostas por Mês</h3><canvas id="grafPropMes"></canvas></div>
+      <div class="card"><h3>Propostas por Vendedor</h3><canvas id="grafPropVendedor"></canvas></div>
+    </div>
+    <div class="grid-2">
+      <div class="card"><h3>Média Diária por Vendedor</h3><canvas id="grafMediaVendedor"></canvas></div>
+      <div class="card"><h3>Tabela de Propostas</h3><div class="tabela-wrap" id="tabelaPropostas"></div></div>
+    </div>
+  </section>
+
+  <section class="painel" id="aba-perdas">
+    <h2>Pedidos Perdidos</h2>
+    <div class="kpis" id="kpisPerdas"></div>
+    <div class="grid-2">
+      <div class="card"><h3>Motivos das Perdas</h3><canvas id="grafMotivos"></canvas></div>
+      <div class="card"><h3>Evolução das Perdas</h3><canvas id="grafPerdasMes"></canvas></div>
+    </div>
+    <div class="grid-2">
+      <div class="card"><h3>Perdas por Vendedor</h3><canvas id="grafPerdasVendedor"></canvas></div>
+      <div class="card"><h3>Ranking dos Motivos</h3><canvas id="grafRankingMotivos"></canvas></div>
+    </div>
+    <div class="card"><h3>Análise Automática</h3><div id="insightsPerdas"></div></div>
+  </section>
+
+  <section class="painel" id="aba-concorrencia">
+    <h2>Levantamento de Mercado</h2>
+    <div class="kpis" id="kpisConcorrencia"></div>
+    <div class="grid-2">
+      <div class="card"><h3>Preço por Concorrente</h3><canvas id="grafPrecoConcorrente"></canvas></div>
+      <div class="card"><h3>Evolução dos Preços</h3><canvas id="grafEvolucaoPrecos"></canvas></div>
+    </div>
+    <div class="card"><h3>Tabela de Preços</h3><div class="tabela-wrap" id="tabelaPrecos"></div></div>
+    <div class="card"><h3>Posicionamento de Preço</h3><div id="posicionamentoPreco"></div></div>
+  </section>
+
+  <section class="painel" id="aba-projecao">
+    <h2>Projeção Real</h2>
+    <div class="kpis" id="kpisProjecao"></div>
+    <div class="grid-2">
+      <div class="card"><h3>Meta × Produzido</h3><canvas id="grafMetaProduzido"></canvas></div>
+      <div class="card"><h3>% de Atingimento — Ranking</h3><canvas id="grafAtingimento"></canvas></div>
+    </div>
+    <div class="card"><h3>Projeção Estimada</h3><div id="projecaoEstimada"></div></div>
+    <div class="card"><h3>Tabela de Desempenho</h3><div class="tabela-wrap" id="tabelaProjecao"></div></div>
+  </section>
+
+  <section class="painel" id="aba-filiais">
+    <h2>Desempenho das Filiais</h2>
+    <div class="kpis" id="kpisFiliais"></div>
+    <div class="card"><h3>Tabela Principal</h3><div class="tabela-wrap" id="tabelaFiliais"></div></div>
+    <div class="card"><h3>Comparativo Filial × Produzido × Meta</h3><canvas id="grafComparativoFilial"></canvas></div>
+    <div class="grid-2">
+      <div class="card"><h3>Ranking — Maior Produção</h3><div class="ranking" id="rankProducao"></div></div>
+      <div class="card"><h3>Ranking — Maior Atingimento</h3><div class="ranking" id="rankAtingimento"></div></div>
+      <div class="card"><h3>Ranking — Mais Propostas</h3><div class="ranking" id="rankPropostas"></div></div>
+      <div class="card"><h3>Ranking — Menos Perdas</h3><div class="ranking" id="rankPerdas"></div></div>
+    </div>
+  </section>
+
+  <section class="painel" id="aba-posicionamento">
+    <h2>Market Share</h2>
+    <div class="kpis" id="kpisPosicionamento"></div>
+    <div class="grid-2">
+      <div class="card"><h3>Market Share por Filial</h3><canvas id="grafMarketShare"></canvas></div>
+      <div class="card"><h3>Volume Mensal dos Concorrentes</h3><canvas id="grafVolumeConcorrentes"></canvas></div>
+    </div>
+    <div class="card"><h3>Comparativo por Filial</h3><canvas id="grafComparativoMercado"></canvas></div>
+    <div class="card"><h3>Oportunidade de Mercado</h3><div id="oportunidadeMercado"></div></div>
+    <div class="card"><h3>Tabela Estratégica</h3><div class="tabela-wrap" id="tabelaEstrategica"></div></div>
+    <div class="card"><h3>Análise Automática</h3><div id="insightsPosicionamento"></div></div>
+  </section>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
